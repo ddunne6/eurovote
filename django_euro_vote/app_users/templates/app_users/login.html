@@ -1,0 +1,21 @@
+{% extends "app_ratings/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <h2>Login</h2>
+            <hr>
+            {{form|crispy}} 
+        </fieldset>
+        <div class="form-group2">
+            <button class="btn btn-outline-info" type="submit"><b>Log in</b></button>
+            <a href="{% url 'signup' %}" class="btn btn-outline-info signupbutton"><b>Sign Up</b></a>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,37 @@
+{% extends "app_ratings/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load urlparams %}
+{% block content %}
+
+<div class="container">
+  <br>
+    <h1>My Ratings</h1>
+
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Running Order</th>
+            <th scope="col">Country</th>
+            <th scope="col">Score</th>
+            <th scope="col">Average</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+            <tr>
+                <td>{{ object.country.running_order }}</td>
+                <td>{{ object.country.name }}</td>
+                {% if object.rating == '-' %}
+                    <td><a href="{% url 'rate' %}{% urlparams country=object.country.id %}">Vote</a></td>
+                {% else %}
+                    <td><a href="{% url 'edit_rating' object.rating.0.id %}{% urlparams country=object.country.id %}" class="text-dark">{{ object.rating.0.score }}</a></td>
+                {% endif %}
+                <td>{{ object.country.average_score|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+
+{% endblock content %}
