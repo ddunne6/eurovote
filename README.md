@@ -22,7 +22,7 @@ Login using superuser or make an acccount
 username: admin
 password: admin
 ```
-Add the countries and running orders, run the server, share the link, getting voting!
+Add the countries and running orders, run the server, share the link, get voting!
 
 ## Additional Features
 Prevent additional users from signing up by opening http://localhost:8000/admin > settings > Setting object (1) > untick the box
