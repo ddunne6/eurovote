@@ -31,6 +31,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
+DEVELOPMENT_MODE = env('DEVELOPMENT', default=False)
 
 ALLOWED_HOSTS = ['localhost', 'eurovote.azurewebsites.net']
 
@@ -40,6 +41,7 @@ ALLOWED_HOSTS = ['localhost', 'eurovote.azurewebsites.net']
 INSTALLED_APPS = [
     'app_users.apps.AppUsersConfig',
     'app_ratings.apps.AppRatingsConfig',
+    'django_countries',
     'crispy_forms',
     'import_export',
     'django.contrib.admin',
@@ -84,7 +86,7 @@ WSGI_APPLICATION = 'django_euro_vote.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if DEBUG:
+if DEVELOPMENT_MODE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -145,7 +147,7 @@ LOGIN_URL = '/accounts/login/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-if DEBUG:
+if DEVELOPMENT_MODE:
     STATIC_URL = '/static/'
     MEDIA_ROOT = f"{BASE_DIR}/media/"
     MEDIA_URL = '/media/'

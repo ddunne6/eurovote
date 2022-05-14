@@ -4,10 +4,11 @@
 {% load urlparams %}
 {% block content %}
 
+<link rel="stylesheet" href="{% static 'flags/sprite.css' %}">
+
 <div class="container">
   <br>
     <h1>My Ratings</h1>
-
     <table class="table table-striped">
         <thead>
           <tr>
@@ -21,7 +22,7 @@
             {% for object in object_list %}
             <tr>
                 <td>{{ object.country.running_order }}</td>
-                <td>{{ object.country.name }}</td>
+                <td><i class="{{ object.country.country.flag_css }}"></i> {{ object.country.country.name }}</td>
                 {% if object.rating == '-' %}
                     <td><a href="{% url 'rate' %}{% urlparams country=object.country.id %}">Vote</a></td>
                 {% else %}

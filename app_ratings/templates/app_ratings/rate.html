@@ -4,19 +4,21 @@
 {% block content %}
 
 <div class="container">
-    <br>
-    <form method="POST">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <h2>Vote out of 10</h2>
-            <hr>
-            <p>{{ country_name }}</p>
-            {{form|crispy}} 
+    <form method="post"> 
+        <input type="hidden" name="csrfmiddlewaretoken"
+            value="VHnRYw7xVGXl6L7YmbxHIN8c756h2xBIXVyZncgkcEdNPhN2B6UkH3pRkznLaSi2">
+        <fieldset>
+            <legend>Vote out of 10 for {{ country_name }}</legend>
+                <div class=""> 
+                    <input type="range" name="score" min="1" max="10" step="1" value="1"
+                        oninput="num.value = this.value" class="rangeinput form-control" required="" id="id_score">
+                    <p text-align="center"><output id="num" text-align="center">1</output></p>
+                </div>
         </fieldset>
-        <div class="form-group2">
-            <button class="btn btn-outline-info" type="submit"><b>Submit</b></button>
-        </div>
+        <input type="submit" name="save" value="Submit vote" class="btn btn-primary" id="submit-id-save">
     </form>
+
 </div>
+
 
 {% endblock content %}

@@ -2,10 +2,11 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from django_countries.fields import CountryField
 
 class Country(models.Model):
     running_order = models.IntegerField()
-    name = models.CharField("Country Name", max_length=100)
+    country = CountryField(blank=True)
 
     class Meta:
         constraints = [
@@ -14,7 +15,7 @@ class Country(models.Model):
         ordering = ['running_order']
 
     def __str__(self):
-        return self.name
+        return self.country.name
 
     # average
     @property
@@ -22,7 +23,9 @@ class Country(models.Model):
         avg = Rating.objects.filter(country=self.id).aggregate(Avg('score'))
         avg = avg['score__avg']
         if not avg:
-            avg = 0
+            avg = "-"
+        else:
+            avg = str(round(avg, 2))
         return avg
 
 class Rating(models.Model):
@@ -33,7 +36,7 @@ class Rating(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.voter) + " - " + self.country.name + " (" + str(self.score) + "/10)"
+        return str(self.voter) + " - " + self.country.country.name + " (" + str(self.score) + "/10)"
 
     class Meta:
         constraints = [

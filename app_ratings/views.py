@@ -1,3 +1,5 @@
+from typing import List
+from django.views.generic.edit import FormView
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
@@ -7,19 +9,23 @@ from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
+from app_ratings.forms import RateCountryForm
+
 
 class RatingMixin(LoginRequiredMixin):
+    template_name = 'app_ratings/rate.html'
+
     def set_country(self, country_id):
-        print("country set")
         self.country = Country.objects.get(id=country_id)
 
-    def get_urlquery(self,request):
+    def get_urlquery(self, request):
         self.set_country(int(request.GET.get('country')))
 
     def form_valid(self, form):
         self.get_urlquery(self.request)
         form.instance.voter = self.request.user
         form.instance.country = self.country
+        self.object = form.save()
         return super().form_valid(form)
 
     def get(self, request, *args, **kwargs):
@@ -29,25 +35,33 @@ class RatingMixin(LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         self.get_urlquery(self.request)
         context = super().get_context_data(**kwargs)
-        context['country_name'] = self.country.name
+        context['country_name'] = f"{self.country.country.name}"
         return context
 
     def get_success_url(self):
-        success_message = "Vote submitted! " + str(self.object.score) + "/10 for " + str(self.object.country)
+        success_message = "Vote submitted! " + \
+            str(self.object.score) + "/10 for " + \
+            str(self.object.country.country.name)
         messages.add_message(self.request, messages.SUCCESS, success_message)
-        return reverse('my_ratings') 
+        return reverse('my_ratings')
 
-class CreateRating(RatingMixin, CreateView):
+
+class CreateRating(RatingMixin, FormView):
+    form_class = RateCountryForm
+
+
+class EditRating(RatingMixin, UpdateView):  # FIXME
     model = Rating
     fields = ['score']
-    template_name = 'app_ratings/rate.html'
 
-class EditRating(RatingMixin, UpdateView):
-    model = Rating
-    fields = ['score']
-    template_name = 'app_ratings/rate.html'
+    def get_success_url(self):
+        success_message = "Vote updated! " + \
+            str(self.object.score) + "/10 for " + \
+            str(self.object.country.country.name)
+        messages.add_message(self.request, messages.SUCCESS, success_message)
+        return reverse('my_ratings')
 
-#Get all countries, if rating relation ship assign, else (-)
+
 class MyRatings(LoginRequiredMixin, ListView):
     model = Rating
     template_name = 'app_ratings/my_ratings.html'
@@ -59,7 +73,8 @@ class MyRatings(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = self.get_countries_ratings(context['object_list'])
+        context['object_list'] = self.get_countries_ratings(
+            context['object_list'])
         return context
 
     def get_countries_ratings(self, ratings):
@@ -68,15 +83,17 @@ class MyRatings(LoginRequiredMixin, ListView):
         for country in countries:
             if ratings.filter(country=country).exists():
                 ratings_combined.append({
-                    "rating":ratings.filter(country=country),
+                    "rating": ratings.filter(country=country),
                     "country": country
                 })
             else:
                 ratings_combined.append({
-                    "rating":'-',
+                    "rating": '-',
                     "country": country
                 })
         return ratings_combined
+
+from app_ratings.standardising import z_scores
 
 class AllRatings(LoginRequiredMixin, ListView):
     model = Rating
@@ -84,26 +101,27 @@ class AllRatings(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = self.get_all_ratings(context['object_list'])
-        context['voters'] = self.get_users()
+        context['object_list'] = self.get_all_ratings()
         return context
 
-    def get_all_ratings(self, ratings):
-        countries = sorted(Country.objects.all(), key=lambda t: t.average_score, reverse=True)
-        users = self.get_users()
-        ratings_combined = []
+    def get_all_ratings(self):
+        ratings: List[Rating] = Rating.objects.all()
+        countries: List[Country] = sorted(Country.objects.all(), key=lambda t: t.average_score, reverse=True)
+        users: List[User] = User.objects.all()
+        table_data = []
+
         for country in countries:
-            ratings_combined.append({
-                'country':country,
-                'scores': []
-            })
+            table_data.append({"Running Order": f"{country.running_order}", "Country": f"{country.country.name}",
+                               "Average Score": country.average_score})
+            country_ratings = ratings.filter(country=country)
             for user in users:
-                if ratings.filter(voter=user, country=country).exists():
-                    ratings_combined[-1]["scores"].append(ratings.filter(voter=user, country=country))
+                if country_ratings.filter(voter=user).exists():
+                    table_data[-1][user.username] = country_ratings.filter(
+                        voter=user).first().score
                 else:
-                    ratings_combined[-1]["scores"].append('-')
-        #print(ratings_combined)
-        return ratings_combined
+                    table_data[-1][user.username] = "-"
+
+        return table_data
 
     def get_users(self):
         return User.objects.all()
