@@ -5,8 +5,7 @@
 
 <div class="container">
     <form method="post"> 
-        <input type="hidden" name="csrfmiddlewaretoken"
-            value="VHnRYw7xVGXl6L7YmbxHIN8c756h2xBIXVyZncgkcEdNPhN2B6UkH3pRkznLaSi2">
+        {% csrf_token %}
         <fieldset>
             <legend>Vote out of 10 for {{ country_name }}</legend>
                 <div class=""> 
