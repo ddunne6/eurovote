@@ -88,8 +88,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'django_euro_vote.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 if DEVELOPMENT_MODE:
     DATABASES = {
@@ -110,9 +108,6 @@ else:
         }
     }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -155,9 +150,6 @@ if DEVELOPMENT_MODE:
     MEDIA_ROOT = f"{BASE_DIR}/media/"
     MEDIA_URL = '/media/'
 else:
-    DEFAULT_FILE_STORAGE = 'django_euro_vote.custom_azure.AzureMediaStorage'
-    STATICFILES_STORAGE = 'django_euro_vote.custom_azure.AzureStaticStorage'
-
     STATIC_LOCATION = "static"
     MEDIA_LOCATION = "media"
 
@@ -167,7 +159,9 @@ else:
     MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
     AZURE_BLOB_KEY = env('AZ_BLOB_KEY')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+    STORAGES = {
+        "default": {"BACKEND": "django_euro_vote.custom_azure.AzureMediaStorage"},
+        "staticfiles": {"BACKEND": "django_euro_vote.custom_azure.AzureStaticStorage"},
+    }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

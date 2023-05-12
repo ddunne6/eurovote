@@ -1,4 +1,3 @@
-
 from storages.backends.azure_storage import AzureStorage
 from .settings import AZURE_BLOB_KEY, AZURE_ACCOUNT_NAME
 
