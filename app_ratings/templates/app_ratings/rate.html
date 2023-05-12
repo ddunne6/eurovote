@@ -4,15 +4,14 @@
 {% block content %}
 
 <div class="container">
+    <br>
     <form method="post"> 
         {% csrf_token %}
         <fieldset>
-            <legend>Vote out of 10 for {{ country_name }}</legend>
-                <div class=""> 
-                    <input type="range" name="score" min="1" max="10" step="1" value="1"
-                        oninput="num.value = this.value" class="rangeinput form-control" required="" id="id_score">
-                    <p text-align="center"><output id="num" text-align="center">1</output></p>
-                </div>
+                <label for="customRange2" class="form-label">Vote out of 10 for <b>{{ country_name }}</b></label>
+                <input type="range" name="score" min="1" max="10" step="1" value="1"
+                    oninput="num.value = this.value" class="form-range" required="" id="id_score">
+                <p text-align="center"><output id="num" text-align="center">1</output></p>
         </fieldset>
         <input type="submit" name="save" value="Submit vote" class="btn btn-primary" id="submit-id-save">
     </form>

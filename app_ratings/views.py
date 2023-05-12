@@ -93,8 +93,6 @@ class MyRatings(LoginRequiredMixin, ListView):
                 })
         return ratings_combined
 
-from app_ratings.standardising import z_scores
-
 class AllRatings(LoginRequiredMixin, ListView):
     model = Rating
     template_name = 'app_ratings/all_ratings.html'

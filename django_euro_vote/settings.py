@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'app_ratings.apps.AppRatingsConfig',
     'django_countries',
     'crispy_forms',
+    "crispy_bootstrap5",
     'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +52,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -138,8 +143,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = '/accounts/login/'
 
