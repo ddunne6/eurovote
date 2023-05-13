@@ -34,6 +34,7 @@ DEBUG = env('DEBUG')
 DEVELOPMENT_MODE = env('DEVELOPMENT', default=False)
 
 ALLOWED_HOSTS = ['localhost', 'eurovote.azurewebsites.net']
+CSRF_TRUSTED_ORIGINS = ['https://eurovote.azurewebsites.net']
 
 
 # Application definition
