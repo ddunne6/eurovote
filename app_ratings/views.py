@@ -109,8 +109,7 @@ class AllRatings(LoginRequiredMixin, ListView):
         table_data = []
 
         for country in countries:
-            table_data.append({"Running Order": f"{country.running_order}", "Country": f"{country.country.name}",
-                               "Average Score": country.average_score})
+            table_data.append(self.get_table_data_row(country))
             country_ratings = ratings.filter(country=country)
             for user in users:
                 if country_ratings.filter(voter=user).exists():
@@ -120,6 +119,15 @@ class AllRatings(LoginRequiredMixin, ListView):
                     table_data[-1][user.username] = "-"
 
         return table_data
+    
+    def get_table_data_row(self, country: Country):
+        return {"Running Order": f"{country.running_order}", "Country": f"{country.country.name}",
+                               "Average Score": country.average_score}
 
     def get_users(self):
         return User.objects.all()
+    
+class ZScoreRatings(AllRatings):
+    def get_table_data_row(self, country: Country):
+        return {"Running Order": f"{country.running_order}", "Country": f"{country.country.name}",
+                               "Z-Score": country.z_score}
